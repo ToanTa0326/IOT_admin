@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { child, onValue, ref, set } from "firebase/database";
 import { database } from "@/firebase.config";
+import { changeEmergencyStatus } from "./api";
 
 const Home = () => {
   const emergencyRef = ref(database, "/emergency");
@@ -20,7 +21,8 @@ const Home = () => {
 
   const toggleEmergency = (status: string) => {
     try {
-      set(emergencyRef, status);
+      // set(emergencyRef, status);
+      changeEmergencyStatus(status);
     } catch (error) {
       console.log(error);
     }
@@ -74,19 +76,23 @@ const Home = () => {
         </button>
       </div>
       <div className="grid grid-cols-2 gap-4 overflow-hidden rounded-md p-5 bg-[#b57edc]">
-        {Object?.keys(parkingLot)?.map((key: string) => (
-          <div
-            key={key}
-            className={`border-b-1 p-4 rounded-lg text-white cursor-pointer w-[160px] text-center ${
-              parkingLot[key] === "available" ? "bg-[#6fc276]" : "bg-[#ff6961]"
-            }`}
-            onClick={() => changeSlotStatus(key)}
-          >
-            <p>
-              {key}: {String(parkingLot?.[key]).charAt(0).toUpperCase() + String(parkingLot?.[key]).slice(1)}
-            </p>
-          </div>
-        ))}
+        {Object?.keys(parkingLot)?.length !== 0 ? (
+          Object?.keys(parkingLot)?.map((key: string) => (
+            <div
+              key={key}
+              className={`border-b-1 p-4 rounded-lg text-white cursor-pointer w-[160px] text-center ${
+                parkingLot[key] === "available" ? "bg-[#6fc276]" : "bg-[#ff6961]"
+              }`}
+              onClick={() => changeSlotStatus(key)}
+            >
+              <p>
+                {key}: {String(parkingLot?.[key]).charAt(0).toUpperCase() + String(parkingLot?.[key]).slice(1)}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="text-white">Loading...</div>
+        )}
       </div>
     </div>
   );
